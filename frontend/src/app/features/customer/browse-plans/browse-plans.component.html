@@ -1,0 +1,257 @@
+<div class="max-w-7xl mx-auto space-y-8 animate-fade-in-up">
+  <!-- Hero Section & Search -->
+  <div class="relative py-10">
+    <div class="max-w-3xl mb-12">
+      <h1 class="text-4xl sm:text-6xl font-display font-bold text-slate-900 leading-[1.1] tracking-tight mb-6">
+        Travel worry-free <br><span class="text-sky-600">everywhere.</span>
+      </h1>
+      <p class="text-lg sm:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl">
+        Secure instant quotes with global coverage and seamless claims processing. <br class="hidden sm:block">
+        Choose from top-rated plans tailored for your journey.
+      </p>
+    </div>
+
+    <div
+      class="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] border border-slate-200/60 relative z-20">
+      <form [formGroup]="searchForm" (ngSubmit)="search()" class="flex flex-col gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- Coverage Type -->
+          <div class="space-y-2.5">
+            <label class="block text-[13px] font-bold uppercase tracking-widest text-slate-400 ml-1">Coverage
+              Type</label>
+            <div class="relative group">
+              <div
+                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <input formControlName="coverageType" type="text"
+                class="w-full pl-11 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl text-[15px] font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/5 focus:border-sky-500 focus:bg-white transition-all"
+                placeholder="e.g. Medical" />
+            </div>
+          </div>
+
+          <!-- Destination -->
+          <div class="space-y-2.5">
+            <label class="block text-[13px] font-bold uppercase tracking-widest text-slate-400 ml-1">Destination</label>
+            <div class="relative group">
+              <div
+                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <input formControlName="destination" type="text"
+                class="w-full pl-11 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl text-[15px] font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/5 focus:border-sky-500 focus:bg-white transition-all"
+                placeholder="Where to?" />
+            </div>
+          </div>
+
+          <!-- Dates -->
+          <div class="col-span-1 sm:col-span-2 grid grid-cols-2 gap-4 relative">
+            <div class="space-y-2.5">
+              <label class="block text-[13px] font-bold uppercase tracking-widest text-slate-400 ml-1">Departure</label>
+              <div class="relative group">
+                <div
+                  class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <input formControlName="startDate" type="date"
+                  class="w-full pl-11 pr-3 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl text-[15px] font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/5 focus:border-sky-500 focus:bg-white transition-all" />
+              </div>
+            </div>
+            <div class="space-y-2.5">
+              <label class="block text-[13px] font-bold uppercase tracking-widest text-slate-400 ml-1">Return</label>
+              <div class="relative group">
+                <input formControlName="endDate" type="date"
+                  class="w-full px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl text-[15px] font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/5 focus:border-sky-500 focus:bg-white transition-all" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" [disabled]="loading()"
+          class="w-full lg:w-max px-12 py-4.5 bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:ring-sky-500/20 text-white font-bold rounded-2xl shadow-lg shadow-sky-600/20 transition-all duration-300 flex items-center justify-center gap-3 transform active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 lg:self-end">
+          @if (loading()) {
+          <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+            </circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          Fetching Best Rates...
+          } @else {
+          <span class="uppercase tracking-widest text-xs">Search Available Plans</span>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+          </svg>
+          }
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  @if (loading()) {
+  <div class="flex justify-center items-center py-20">
+    <div class="animate-bounce p-4 rounded-full bg-sky-100 shadow-[0_0_20px_rgba(14,165,233,0.3)]">
+      <div class="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  </div>
+  } @else if (plans().length === 0 && searched()) {
+  <div class="bg-white rounded-2xl p-12 text-center border border-slate-200 shadow-sm max-w-2xl mx-auto mt-8">
+    <div
+      class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100 ring-8 ring-slate-50/50">
+      <svg class="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+      </svg>
+    </div>
+    <h3 class="text-xl font-display font-bold text-slate-800 mb-2">No Plans Available</h3>
+    <p class="text-slate-500 font-medium">We couldn't find any plans matching your specific criteria. Try adjusting your
+      coverage type or destination.</p>
+  </div>
+  } @else if (plans().length > 0) {
+  <div class="mt-8 pt-4">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-display font-bold text-slate-800">Showing <span class="text-sky-600">{{ plans().length }}
+          plans</span></h2>
+      <div class="text-sm font-medium text-slate-500 bg-white px-4 py-2 border border-slate-200 rounded-lg shadow-sm">
+        Sorted by Recommended</div>
+    </div>
+
+    <div class="space-y-4">
+      @for (plan of plans(); track plan.planId) {
+      <div
+        class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_8px_30px_rgba(14,165,233,0.12)] hover:border-sky-300 transition-all duration-300 overflow-hidden group">
+        <div class="flex flex-col md:flex-row">
+          <!-- Left side (Provider / Plan Info) -->
+          <div
+            class="p-6 md:w-[35%] border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-between bg-gradient-to-br from-white to-sky-50/30">
+            <div>
+              <div class="flex justify-between items-start mb-4">
+                <div
+                  class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center shadow-md">
+                  <span class="text-white font-bold text-xl">T</span>
+                </div>
+                <div
+                  class="bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-emerald-100">
+                  Recommended</div>
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 leading-tight">{{ plan.planName }}</h3>
+              <p class="text-sm font-medium text-slate-500 mt-1 flex items-center gap-1.5 line-clamp-1">
+                <svg class="w-4 h-4 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                Travel {{ plan.planType }} - Premium
+              </p>
+            </div>
+          </div>
+
+          <!-- Middle details -->
+          <div class="p-6 md:w-[45%] flex flex-col justify-center">
+            <div class="grid grid-cols-2 gap-y-4 gap-x-6">
+              <!-- Benefit 1 -->
+              <div class="flex items-start gap-3">
+                <div class="mt-0.5 rounded-full bg-emerald-100 p-0.5 text-emerald-600 shrink-0">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Medical Expenses</p>
+                  <p class="text-[15px] font-bold text-slate-800">${{ plan.maxCoverageAmount | number:'1.0-0' }}</p>
+                </div>
+              </div>
+              <!-- Benefit 2 -->
+              <div class="flex items-start gap-3">
+                <div class="mt-0.5 rounded-full bg-emerald-100 p-0.5 text-emerald-600 shrink-0">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Coverage Limit</p>
+                  <p class="text-[15px] font-bold text-slate-800">${{ plan.coverageAmount | number:'1.0-0' }}</p>
+                </div>
+              </div>
+              <!-- Benefit 3 -->
+              <div class="flex items-start gap-3">
+                <div class="mt-0.5 rounded-full bg-emerald-100 p-0.5 text-emerald-600 shrink-0">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Loss of Passport</p>
+                  <p class="text-[15px] font-semibold text-slate-700">$500</p>
+                </div>
+              </div>
+              <!-- Benefit 4 -->
+              <div class="flex items-start gap-3">
+                <div class="mt-0.5 rounded-full bg-emerald-100 p-0.5 text-emerald-600 shrink-0">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Trip Cancellation</p>
+                  <p class="text-[15px] font-semibold text-slate-700">Covered</p>
+                </div>
+              </div>
+            </div>
+            <!-- Mini link -->
+            <button type="button"
+              class="text-sm font-semibold text-sky-600 hover:underline mt-4 text-left self-start inline-flex items-center gap-1 group-hover:text-sky-700 transition-colors">
+              View all features <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Right action pane -->
+          <div
+            class="p-6 md:w-[20%] flex flex-col justify-center items-center md:items-end border-t md:border-t-0 md:border-l border-slate-100 bg-slate-50/50">
+            <div class="text-center md:text-right w-full">
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">Estimated Premium</p>
+              <div class="flex items-baseline justify-center md:justify-end gap-1 mb-4">
+                <p class="text-3xl font-display font-bold text-slate-900">${{ (plan.coverageAmount * 0.05) |
+                  number:'1.0-0' }}</p>
+              </div>
+              <button type="button" (click)="expressInterest(plan)" [disabled]="interestLoading()"
+                class="w-full flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-5 py-3.5 text-[15px] font-bold text-white hover:bg-sky-700 focus:ring-4 focus:ring-sky-500/20 shadow-md shadow-sky-600/20 disabled:opacity-60 disabled:shadow-none transition-all duration-200 group-hover:-translate-y-0.5 transform">
+                Proceed
+                @if (interestLoading()) {
+                <svg class="animate-spin h-4 w-4 ml-1 text-white" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+                  </circle>
+                  <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                  </path>
+                </svg>
+                } @else {
+                <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                </svg>
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>

@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TravelInsurance.Application.Dtos;
+using TravelInsurance.Application.Interfaces.Repositories;
+using TravelInsurance.Application.Interfaces.Services;
+
+namespace TravelInsurance.Application.Services
+{
+    public class UserService : IUserService
+    {
+        private readonly IUserRepository _userRepository;
+
+        public UserService(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
+        public async Task ActivateUserAsync(int id)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null) throw new Exception("User not found");
+            if (user.IsActive) throw new Exception("Already active");
+
+            user.IsActive = true;
+            await _userRepository.UpdateAsync(user);
+        }
+
+        public async Task DeactivateUserAsync(int id)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null) throw new Exception("User not found");
+            if (!user.IsActive) throw new Exception("Already inactive");
+
+            user.IsActive = false;
+            await _userRepository.UpdateAsync(user);
+        }
+
+        public async Task<IEnumerable<UserResponseDto>> GetAgentsAsync()
+        {
+            var agents = await _userRepository.GetAgentsAsync();
+            return agents.Select(a => new UserResponseDto(
+        a.Id,
+        a.Name,
+        a.Email,
+        "Agent",
+        a.IsActive));
+        }
+
+        public async Task<IEnumerable<UserResponseDto>> GetCustomersAsync()
+        {
+            var users = await _userRepository.GetAllAsync();
+            return users.Where(u => u.Role == "Customer")
+                .Select(u => new UserResponseDto(u.Id, u.Name, u.Email, u.Role, u.IsActive));
+        }
+
+        public async Task<IEnumerable<UserResponseDto>> GetClaimOfficersAsync()
+        {
+            var users = await _userRepository.GetAllAsync();
+            return users.Where(u => u.Role == "ClaimOfficer")
+                .Select(u => new UserResponseDto(u.Id, u.Name, u.Email, u.Role, u.IsActive));
+        }
+    }
+}

@@ -1,0 +1,119 @@
+<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8 font-body animate-fade-in-up">
+  <div class="mb-8 flex items-center gap-3">
+    <div
+      class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 shadow-sm border border-orange-200">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <div>
+      <h1 class="text-2xl font-display font-bold text-slate-900 tracking-tight">Pending Payments</h1>
+      <p class="text-sm font-medium text-slate-500">Complete these payments to activate your coverage instantly.</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+  <div class="flex justify-center items-center py-20">
+    <div class="animate-bounce p-4 rounded-full bg-sky-100 shadow-[0_0_20px_rgba(14,165,233,0.3)]">
+      <div class="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  </div>
+  } @else if (policies().length === 0) {
+  <div class="bg-white rounded-2xl p-12 text-center border border-slate-200 shadow-sm">
+    <div
+      class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-100 ring-8 ring-emerald-50/50">
+      <svg class="w-10 h-10 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <h3 class="text-xl font-display font-bold text-slate-800 mb-2">You're all caught up!</h3>
+    <p class="text-slate-500 font-medium">There are no pending payments on your account at this time.</p>
+  </div>
+  } @else {
+  <div class="space-y-6">
+    @for (p of policies(); track p.policyId) {
+    <div
+      class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-[0_8px_30px_rgba(249,115,22,0.12)] hover:border-orange-300 transition-all duration-300 overflow-hidden group">
+      <div class="flex flex-col md:flex-row">
+        <!-- Left Info -->
+        <div
+          class="p-6 md:w-3/5 border-b md:border-b-0 md:border-r border-slate-100 bg-gradient-to-br from-white to-slate-50/50">
+          <div class="flex items-center gap-2 mb-4 mt-1">
+            <span
+              class="bg-orange-100 text-orange-700 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border border-orange-200 shadow-sm">Awaiting
+              Payment</span>
+            <span
+              class="text-[11px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-1 rounded border border-slate-200">#{{
+              p.policyId.toString() | slice:0:8 }}</span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-5 leading-tight">{{ p.planName }}</h3>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-white rounded-xl p-3 border border-slate-200 shadow-sm">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1 flex items-center gap-1"><svg
+                  class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg> Coverage Period</p>
+              <p class="text-[13px] font-semibold text-slate-800 whitespace-nowrap lg:whitespace-normal">
+                {{ p.startDate | date:'MMM d, y' }} – {{ p.endDate | date:'MMM d, y' }}
+              </p>
+            </div>
+            <div class="bg-white rounded-xl p-3 border border-slate-200 shadow-sm">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1 flex items-center gap-1"><svg
+                  class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg> Destination</p>
+              <p class="text-[14px] font-semibold text-slate-800">
+                Worldwide
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Payment Box -->
+        <div class="p-6 md:w-2/5 md:bg-slate-50 flex flex-col justify-center items-center md:items-end">
+          <div class="text-center md:text-right mb-6 w-full">
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Total Amount Due</p>
+            <div class="flex items-baseline justify-center md:justify-end gap-1">
+              <span class="text-sm font-bold text-slate-400">$</span>
+              <p class="text-4xl font-display font-bold text-slate-900 tracking-tight">{{ p.premiumAmount |
+                number:'1.2-2' }}</p>
+            </div>
+          </div>
+          <button type="button" (click)="pay(p.policyId)" [disabled]="payingId() === p.policyId"
+            class="w-full relative overflow-hidden flex items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-emerald-500 to-emerald-600 px-6 py-4 text-[15px] font-bold text-white hover:from-emerald-400 hover:to-emerald-500 focus:ring-4 focus:ring-emerald-500/30 shadow-[0_4px_20px_rgba(16,185,129,0.3)] disabled:opacity-75 disabled:shadow-none transition-all duration-300 transform active:scale-[0.98]">
+            @if (payingId() === p.policyId) {
+            <svg class="animate-spin h-5 w-5 text-emerald-100" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+              </circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+            Processing...
+            } @else {
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            Pay Securely
+            }
+          </button>
+          <div
+            class="mt-4 flex items-center justify-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest w-full">
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            Secure 256-bit Encryption
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

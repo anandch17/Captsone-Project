@@ -1,0 +1,17 @@
+<div class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
+  @for (t of toastService.toasts(); track t.id) {
+    <div
+      [class]="'rounded-lg border px-4 py-3 shadow ' + typeStyles[t.type]"
+      role="alert"
+    >
+      <p class="text-sm font-medium">{{ t.message }}</p>
+      <button
+        type="button"
+        class="mt-1 text-xs underline opacity-80 hover:opacity-100"
+        (click)="toastService.dismiss(t.id)"
+      >
+        Dismiss
+      </button>
+    </div>
+  }
+</div>

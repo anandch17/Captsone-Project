@@ -1,0 +1,138 @@
+<div class="p-6 md:p-8 max-w-7xl mx-auto space-y-6 font-body animate-fade-in-up">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+    <div class="flex items-center gap-4">
+      <div
+        class="w-12 h-12 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-rose-500 relative">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        @if (claims().length > 0) {
+        <span class="absolute -top-1.5 -right-1.5 flex h-4 w-4">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+          <span
+            class="relative inline-flex rounded-full h-4 w-4 bg-rose-500 border-2 border-white text-[9px] font-bold text-white items-center justify-center">{{
+            claims().length }}</span>
+        </span>
+        }
+      </div>
+      <div>
+        <h1 class="text-2xl font-display font-bold text-slate-900 tracking-tight">Assigned Claims Workspace</h1>
+        <p class="text-sm font-medium text-slate-500">Review and moderate user-submitted incident and hospital claims.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
+    @if (loading()) {
+    <div class="flex justify-center items-center py-20">
+      <div class="animate-bounce p-4 rounded-full bg-rose-100 shadow-[0_0_20px_rgba(225,29,72,0.3)]">
+        <div class="w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    </div>
+    } @else if (claims().length === 0) {
+    <div class="py-16 flex flex-col items-center justify-center text-center">
+      <div
+        class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-4 border border-emerald-100 ring-8 ring-emerald-50/50">
+        <svg class="w-10 h-10 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-display font-bold text-slate-800 mb-2">Queue Empty</h3>
+      <p class="text-slate-500 font-medium max-w-sm">There are currently no assigned claims waiting for your review.</p>
+    </div>
+    } @else {
+    <div class="divide-y divide-slate-100">
+      @for (c of claims(); track c.id) {
+      <div
+        class="p-5 md:p-6 hover:bg-slate-50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden group">
+
+        <div class="absolute inset-y-0 left-0 w-1"
+          [class.bg-amber-400]="c.status === 'Submitted' || c.status === 'UnderReview'"
+          [class.bg-emerald-400]="c.status === 'Approved'" [class.bg-rose-400]="c.status === 'Rejected'"></div>
+
+        <!-- Details -->
+        <div class="flex items-start gap-5 flex-1 pl-2">
+          <div
+            class="w-12 h-12 rounded-full border border-slate-200 bg-white flex items-center justify-center shrink-0 shadow-sm text-slate-500">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.744 13.842L11 12.72m0 0v-2.88m0 2.88-2.512 2.513M14.25 11.25h2.25" />
+            </svg>
+          </div>
+
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center gap-2 mb-1.5">
+              <h3 class="font-bold text-slate-900 text-lg">{{ c.claimType }}</h3>
+              <span
+                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded border border-slate-200">Claim
+                #{{ c.id.toString() | slice:0:8 }}</span>
+              <span
+                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded border border-slate-200">Policy
+                #{{ c.policyNumber.toString() | slice:0:8 }}</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mt-2">
+              <p class="text-[13px] font-semibold text-slate-600 flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="text-slate-500 font-medium">Customer:</span> <span class="text-slate-800">{{ c.customerName
+                  }}</span>
+              </p>
+              <p class="text-[13px] font-semibold text-slate-600 flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-slate-500 font-medium">Amount:</span> <span class="text-slate-800 font-bold">${{
+                  c.claimAmount | number:'1.2-2' }}</span>
+              </p>
+              <p class="text-[13px] font-semibold text-slate-600 flex items-center gap-1.5 sm:col-span-2">
+                <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-slate-500 font-medium">Status:</span>
+                <span
+                  class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider"
+                  [class.bg-amber-50]="c.status === 'Submitted' || c.status === 'UnderReview'"
+                  [class.text-amber-700]="c.status === 'Submitted' || c.status === 'UnderReview'"
+                  [class.bg-emerald-50]="c.status === 'Approved'" [class.text-emerald-700]="c.status === 'Approved'"
+                  [class.bg-rose-50]="c.status === 'Rejected'" [class.text-rose-700]="c.status === 'Rejected'">
+                  {{ c.status === 'UnderReview' ? 'Under Review' : c.status }}
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Area -->
+        <div class="flex shrink-0 border-t sm:border-t-0 pt-4 sm:pt-0 border-slate-100">
+          @if (c.status === ClaimStatus.Submitted || c.status === ClaimStatus.UnderReview) {
+          <a [routerLink]="['/claim-officer', 'review-claim', c.id]"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-sky-600 font-semibold text-white text-[14px] px-6 py-2.5 rounded-xl shadow-md hover:bg-sky-700 focus:ring-4 focus:ring-sky-500/30 transition-all transform active:scale-95 whitespace-nowrap">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            Review Details
+          </a>
+          } @else {
+          <a [routerLink]="['/claim-officer', 'review-claim', c.id]"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-slate-200 font-semibold text-slate-600 text-[14px] px-6 py-2.5 rounded-xl hover:bg-slate-50 transition-all whitespace-nowrap">
+            View Details
+          </a>
+          }
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>

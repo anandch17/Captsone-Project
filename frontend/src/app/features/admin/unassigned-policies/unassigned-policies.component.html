@@ -1,0 +1,138 @@
+<div class="p-6 md:p-8 max-w-7xl mx-auto space-y-6 font-body animate-fade-in-up">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+    <div class="flex items-center gap-4">
+      <div
+        class="w-12 h-12 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-sky-500">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.125c0-1.243-1.007-2.25-2.25-2.25H6.75A2.25 2.25 0 004.5 6.125v13.5A2.25 2.25 0 006.75 21.875h1.5" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-display font-bold text-slate-900 tracking-tight">Policy Catalog</h1>
+        <p class="text-sm font-medium text-slate-500">Comprehensive overview and management of all system policies.</p>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <select (change)="onStatusFilterChange($event)"
+          class="appearance-none bg-white border border-slate-200 text-slate-700 font-semibold text-sm rounded-lg pl-4 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 shadow-sm cursor-pointer transition-all">
+          <option value="">All Statuses</option>
+          @for (opt of statusOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
+    @if (loading()) {
+    <div class="flex justify-center items-center py-20">
+      <div class="animate-bounce p-4 rounded-full bg-sky-100 shadow-[0_0_20px_rgba(14,165,233,0.3)]">
+        <div class="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    </div>
+    } @else if (filteredPolicies().length === 0) {
+    <div class="py-16 flex flex-col items-center justify-center text-center">
+      <div
+        class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100 ring-8 ring-slate-50/50">
+        <svg class="w-10 h-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-display font-bold text-slate-800 mb-2">No Policies Found</h3>
+      <p class="text-slate-500 font-medium max-w-sm">No policies match the selected status filter at the moment.</p>
+    </div>
+    } @else {
+    <div class="divide-y divide-slate-100">
+      @for (p of filteredPolicies(); track p.policyId) {
+      <div
+        class="p-5 md:p-6 hover:bg-slate-50 transition-colors flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+        <!-- Details -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 flex-1">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Customer</p>
+            <div class="flex items-center gap-2">
+              <div
+                class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center shrink-0">
+                {{ p.customerName | slice:0:1 | uppercase }}
+              </div>
+              <p class="font-bold text-slate-900 text-[15px] truncate">{{ p.customerName }}</p>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Plan <span
+                class="text-[10px] ml-1 bg-slate-200 text-slate-500 px-1 py-0.5 rounded">#{{p.policyId.toString() |
+                slice:0:8}}</span></p>
+            <p class="font-bold text-slate-800 text-[15px] truncate">{{ p.planName }}</p>
+            <p class="text-[11px] font-semibold text-slate-500 mt-0.5">
+              {{ p.startDate | date:'MMM d' }} – {{ p.endDate | date:'MMM d, y' }}
+            </p>
+          </div>
+
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Status</p>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border"
+              [class.bg-sky-50]="p.status === 'Interested'" [class.text-sky-700]="p.status === 'Interested'"
+              [class.border-sky-200]="p.status === 'Interested'" [class.bg-emerald-50]="p.status === 'Active'"
+              [class.text-emerald-700]="p.status === 'Active'" [class.border-emerald-200]="p.status === 'Active'"
+              [class.bg-amber-50]="p.status === 'AgentApprovalPending' || p.status === 'PaymentPending'"
+              [class.text-amber-700]="p.status === 'AgentApprovalPending' || p.status === 'PaymentPending'"
+              [class.border-amber-200]="p.status === 'AgentApprovalPending' || p.status === 'PaymentPending'"
+              [class.bg-rose-50]="p.status === 'Expired'" [class.text-rose-700]="p.status === 'Expired'"
+              [class.border-rose-200]="p.status === 'Expired'">
+              {{ p.status === 'AgentApprovalPending' ? 'Approval Pending' : p.status === 'PaymentPending' ? 'Pay
+              Pending' : p.status }}
+            </span>
+          </div>
+
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Premium</p>
+            <p class="font-bold text-slate-900 text-lg">${{ p.premiumAmount | number:'1.2-2' }}</p>
+          </div>
+        </div>
+
+        <!-- Action Area (Only for Interested) -->
+        @if (p.status === 'Interested') {
+        <div
+          class="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0 bg-slate-50/50 rounded-xl p-4 xl:p-0 border xl:border-transparent border-slate-100">
+          <div class="relative min-w-[180px]">
+            <select [value]="selectedAgentId(p.policyId)" (change)="onSelectAgent(p.policyId, $event)"
+              class="w-full appearance-none bg-white border border-slate-200 text-slate-700 font-semibold text-sm rounded-lg pl-4 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500/20 shadow-sm cursor-pointer transition-all">
+              <option value="0" disabled>-- Choose Agent --</option>
+              @for (a of agents(); track a.id) {
+              <option [value]="a.id">{{ a.name }}</option>
+              }
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+          <button type="button" (click)="assignAgent(p.policyId)" [disabled]="!getSelectedAgentId(p.policyId)"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-sky-600 font-semibold text-white text-sm px-4 py-2 rounded-lg shadow-md hover:bg-sky-700 disabled:opacity-50 transition-all active:scale-95 whitespace-nowrap">
+            Assign
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </div>
+        }
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>

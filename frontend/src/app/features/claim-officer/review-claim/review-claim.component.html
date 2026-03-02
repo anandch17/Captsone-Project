@@ -1,0 +1,180 @@
+<div class="p-4 md:p-8 max-w-4xl mx-auto space-y-6 font-body animate-fade-in-up">
+  <!-- Header -->
+  <div class="flex items-center gap-4 mb-2">
+    <button routerLink="/claim-officer" class="p-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+    </button>
+    <div>
+      <h1 class="text-2xl font-display font-bold text-slate-900 tracking-tight flex items-center gap-3">
+        Claim Details
+        @if (claim()) {
+        <span
+          class="text-sm font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded uppercase tracking-widest border border-slate-200">#{{
+          claimId()?.toString() | slice:0:8 }}</span>
+        }
+      </h1>
+      <p class="text-sm font-medium text-slate-500">Review policyholder claim information and moderate accordingly.</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
+    @if (loading()) {
+    <div class="flex justify-center items-center py-32">
+      <div class="animate-bounce p-4 rounded-full bg-slate-100 shadow-[0_0_20px_rgba(203,213,225,0.3)]">
+        <div class="w-10 h-10 border-4 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    </div>
+    } @else if (!claim()) {
+    <div class="py-24 flex flex-col items-center justify-center text-center">
+      <div
+        class="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mb-4 border border-rose-100 ring-8 ring-rose-50/50">
+        <svg class="w-10 h-10 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-display font-bold text-slate-800 mb-2">Claim Not Found</h3>
+      <p class="text-slate-500 font-medium max-w-sm">The claim you are looking for has been removed or the ID is
+        invalid.</p>
+      <button routerLink="/claim-officer" class="mt-6 font-bold text-sky-600 hover:text-sky-700">Return to
+        Queue</button>
+    </div>
+    } @else {
+    <!-- Details Card -->
+    <div class="p-6 md:p-8 border-b border-slate-100">
+      <div class="flex flex-col md:flex-row gap-8 justify-between">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
+          <div class="space-y-6">
+            <div>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Customer / Assignee</p>
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-700 font-bold border border-indigo-100 flex items-center justify-center">
+                  {{ claim()!.customerName | slice:0:1 | uppercase }}</div>
+                <p class="font-bold text-slate-900 text-lg">{{ claim()!.customerName }}</p>
+              </div>
+            </div>
+
+            <div>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Reported Incident Type</p>
+              <p
+                class="font-bold text-slate-800 text-[15px] bg-slate-50 border border-slate-200 py-2 px-3 rounded-lg inline-block">
+                {{ claim()!.claimType }}</p>
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            <div>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Current Status</p>
+              <div
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border font-bold text-[13px] tracking-wide"
+                [class.bg-amber-50]="claim()!.status === 'Submitted' || claim()!.status === 'UnderReview'"
+                [class.border-amber-200]="claim()!.status === 'Submitted' || claim()!.status === 'UnderReview'"
+                [class.text-amber-700]="claim()!.status === 'Submitted' || claim()!.status === 'UnderReview'"
+                [class.bg-emerald-50]="claim()!.status === 'Approved'"
+                [class.border-emerald-200]="claim()!.status === 'Approved'"
+                [class.text-emerald-700]="claim()!.status === 'Approved'"
+                [class.bg-rose-50]="claim()!.status === 'Rejected'"
+                [class.border-rose-200]="claim()!.status === 'Rejected'"
+                [class.text-rose-700]="claim()!.status === 'Rejected'">
+                @if (claim()!.status === 'Submitted' || claim()!.status === 'UnderReview') {
+                <span class="relative flex h-2.5 w-2.5">
+                  <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                </span>
+                }
+                {{ claim()!.status === 'UnderReview' ? 'Under Review' : claim()!.status }}
+              </div>
+            </div>
+
+            <div>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Requested Payout</p>
+              <div class="flex items-baseline gap-1">
+                <span class="text-slate-400 font-bold text-lg">$</span>
+                <p class="font-bold text-slate-900 text-3xl">{{ claim()!.claimAmount | number:'1.2-2' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Moderation / Actions Area -->
+    <div class="p-6 md:p-8 bg-slate-50/50">
+      @if (claim()!.status === ClaimStatus.Submitted || claim()!.status === ClaimStatus.UnderReview) {
+      <div class="flex flex-col">
+        <h3 class="text-[13px] font-bold text-slate-600 uppercase tracking-widest mb-4">Moderation Actions</h3>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" (click)="review('Approved')" [disabled]="submitting()"
+            class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-emerald-600 font-semibold text-white text-[15px] px-8 py-3.5 rounded-xl shadow-md hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-500/30 disabled:opacity-50 disabled:shadow-none transition-all transform active:scale-95">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            Approve Claim
+          </button>
+          <button type="button" (click)="review('Rejected')" [disabled]="submitting()"
+            class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-white border-2 border-rose-200 font-semibold text-rose-600 text-[15px] px-8 py-3.5 rounded-xl hover:bg-rose-50 hover:border-rose-300 focus:ring-4 focus:ring-rose-500/20 disabled:opacity-50 transition-all transform active:scale-95">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Reject Claim
+          </button>
+        </div>
+      </div>
+      }
+
+      @if (claim()!.status === ClaimStatus.Approved) {
+      <div class="bg-white rounded-xl shadow-sm border border-emerald-100 p-6 max-w-lg relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
+        <div class="flexitems-center gap-3 mb-4">
+          <div
+            class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100 mb-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-display font-bold text-slate-800">Settle Claim Payout</h3>
+          <p class="text-[13px] text-slate-500 font-medium">Finalize the settlement amount to be paid out to the
+            customer.</p>
+        </div>
+
+        <form [formGroup]="settleForm" (ngSubmit)="settle()" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Settlement
+              Amount</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-emerald-600 font-bold">$</span>
+              <input formControlName="settledAmount" type="number" step="0.01"
+                class="w-full pl-8 pr-3 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all font-bold text-emerald-700 text-lg placeholder-slate-400"
+                [placeholder]="claim()!.claimAmount" />
+            </div>
+          </div>
+          <button type="submit" [disabled]="settleForm.invalid || submitting()"
+            class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 font-semibold text-white text-[15px] px-6 py-3.5 rounded-xl shadow-md hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-500/30 disabled:opacity-50 disabled:shadow-none transition-all transform active:scale-95">
+            @if (submitting()) {
+            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+              </circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+            Processing Settlement...
+            } @else {
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Finalize Settlement
+            }
+          </button>
+        </form>
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>

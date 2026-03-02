@@ -1,0 +1,227 @@
+<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8 font-body animate-fade-in-up">
+  <div class="mb-8 flex items-center justify-between gap-4 flex-wrap">
+    <div class="flex items-center gap-3">
+      <div
+        class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600 shadow-sm border border-violet-200">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-display font-bold text-slate-900 tracking-tight">Claim Center</h1>
+        <p class="text-sm font-medium text-slate-500">Track your submitted claims or file a new one.</p>
+      </div>
+    </div>
+
+    @if (!showRaiseForm() && !loading()) {
+    <button type="button" (click)="openRaiseForm()"
+      class="flex items-center gap-2 rounded-xl bg-sky-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-sky-700 focus:ring-4 focus:ring-sky-500/20 shadow-lg shadow-sky-600/20 transition-all duration-200 transform active:scale-95">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+      </svg>
+      File New Claim
+    </button>
+    }
+  </div>
+
+  @if (showRaiseForm()) {
+  <!-- Raise Claim Form -->
+  <div class="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden relative">
+    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 to-sky-600"></div>
+
+    <div class="p-6 md:p-8">
+      <div class="mb-6 flex justify-between items-start border-b border-slate-100 pb-5">
+        <div>
+          <h2 class="text-xl font-display font-bold text-slate-900">Raise a Claim</h2>
+          <p class="text-sm text-slate-500 font-medium mt-1">Please provide accurate details to expedite your request.
+          </p>
+        </div>
+        <button type="button" (click)="showRaiseForm.set(false)"
+          class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form [formGroup]="raiseForm" (ngSubmit)="submitClaim()" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Policy Selection -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Select Active Policy</label>
+            <div class="relative">
+              <select formControlName="policyId"
+                class="w-full appearance-none pl-4 pr-10 py-3 text-[15px] font-medium text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition-all cursor-pointer">
+                <option value="" disabled selected>-- Choose Policy --</option>
+                @for (p of activePolicies(); track p.id) {
+                <option [value]="p.id">{{ p.planName }} (Policy #{{ p.id.toString() | slice:0:8 }})</option>
+                }
+              </select>
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Claim Type -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Claim Type</label>
+            <div class="relative">
+              <input formControlName="claimType"
+                class="w-full pl-4 pr-4 py-3 text-[15px] font-medium text-slate-900 bg-slate-50 border border-slate-200 rounded-xl placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition-all"
+                placeholder="e.g., Medical, Loss of Baggage" />
+            </div>
+          </div>
+
+          <!-- Claim Amount -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Requested Amount ($)</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <span class="text-slate-400 font-semibold">$</span>
+              </div>
+              <input formControlName="claimAmount" type="number" step="0.01"
+                class="w-full pl-8 pr-4 py-3 text-[15px] font-medium text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition-all"
+                placeholder="0.00" />
+            </div>
+          </div>
+
+          <!-- Documents -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Supporting Documents</label>
+            <p class="text-[13px] text-slate-500 mb-2">Provide URLs to receipts, medical notes, or police reports. Place
+              each URL on a new line.</p>
+            <textarea formControlName="documentUrlsText" rows="4"
+              class="w-full px-4 py-3 text-[15px] font-medium text-slate-900 bg-slate-50 border border-slate-200 rounded-xl placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition-all resize-none"
+              placeholder="https://drive.google.com/...&#10;https://dropbox.com/..."></textarea>
+          </div>
+        </div>
+
+        <div class="pt-4 flex flex-col sm:flex-row gap-3 border-t border-slate-100 mt-6">
+          <button type="submit" [disabled]="raiseForm.invalid || submitting()"
+            class="flex-1 rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 px-6 py-3.5 text-[15px] font-bold text-white hover:from-sky-600 hover:to-sky-700 focus:ring-4 focus:ring-sky-500/30 shadow-lg shadow-sky-500/30 disabled:opacity-60 disabled:shadow-none transition-all flex justify-center items-center gap-2">
+            @if (submitting()) {
+            <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+              </circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+            Processing...
+            } @else {
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+            </svg>
+            Submit Claim Request
+            }
+          </button>
+          <button type="button" (click)="showRaiseForm.set(false)"
+            class="w-full sm:w-auto rounded-xl bg-white border-2 border-slate-200 px-6 py-3.5 text-[15px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  }
+
+  @if (!showRaiseForm()) {
+  <!-- Claims History -->
+  @if (loading()) {
+  <div class="flex justify-center items-center py-20">
+    <div class="animate-bounce p-4 rounded-full bg-sky-100 shadow-[0_0_20px_rgba(14,165,233,0.3)]">
+      <div class="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  </div>
+  } @else if (claims().length === 0) {
+  <div class="bg-white rounded-2xl p-12 text-center border border-slate-200 shadow-sm mt-4">
+    <div
+      class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100 ring-8 ring-slate-50/50">
+      <svg class="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+      </svg>
+    </div>
+    <h3 class="text-xl font-display font-bold text-slate-800 mb-2">No Claims History</h3>
+    <p class="text-slate-500 font-medium">You haven't submitted any insurance claims yet.</p>
+  </div>
+  } @else {
+  <div class="space-y-4">
+    @for (c of claims(); track c.claimId) {
+    <div
+      class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
+      <div class="p-6 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 border-l-4"
+        [class.border-l-sky-500]="c.status === 'Pending'" [class.border-l-amber-500]="c.status === 'UnderReview'"
+        [class.border-l-emerald-500]="c.status === 'Approved'" [class.border-l-rose-500]="c.status === 'Rejected'">
+
+        <!-- Core Info -->
+        <div class="flex items-start gap-4 flex-1">
+          <div
+            class="w-12 h-12 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+              class="w-6 h-6 text-slate-500">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.744 13.842L11 12.72m0 0v-2.88m0 2.88-2.512 2.513M14.25 11.25h2.25" />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-bold text-slate-900 text-lg">{{ c.claimType }}</h3>
+              <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded uppercase">#{{
+                c.claimId.toString() | slice:0:8 }}</span>
+            </div>
+            <p class="text-[13px] font-semibold text-slate-500 mb-2">Claim Amount: <span
+                class="text-slate-800 font-bold">${{ c.claimAmount | number:'1.2-2' }}</span></p>
+
+            @if (c.documentUrls && c.documentUrls.length) {
+            <div class="flex flex-wrap items-center gap-2 mt-2">
+              <span class="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                </svg>
+                Documents:
+              </span>
+              @for (url of c.documentUrls; track url) {
+              <a [href]="url" target="_blank" rel="noopener"
+                class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-sky-600 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-md hover:bg-sky-100 transition-colors">
+                View File <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              }
+            </div>
+            } @else {
+            <p class="text-xs text-slate-400 italic">No supporting documents attached.</p>
+            }
+          </div>
+        </div>
+
+        <!-- Status Bead -->
+        <div class="md:w-40 flex md:justify-end shrink-0 pl-16 md:pl-0">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold border shadow-sm"
+            [class.bg-sky-50]="c.status === 'Pending'" [class.text-sky-700]="c.status === 'Pending'"
+            [class.border-sky-200]="c.status === 'Pending'" [class.bg-amber-50]="c.status === 'UnderReview'"
+            [class.text-amber-700]="c.status === 'UnderReview'" [class.border-amber-200]="c.status === 'UnderReview'"
+            [class.bg-emerald-50]="c.status === 'Approved'" [class.text-emerald-700]="c.status === 'Approved'"
+            [class.border-emerald-200]="c.status === 'Approved'" [class.bg-rose-50]="c.status === 'Rejected'"
+            [class.text-rose-700]="c.status === 'Rejected'" [class.border-rose-200]="c.status === 'Rejected'">
+            <span class="w-2 h-2 rounded-full" [class.bg-sky-500]="c.status === 'Pending'"
+              [class.bg-amber-500]="c.status === 'UnderReview'" [class.bg-emerald-500]="c.status === 'Approved'"
+              [class.bg-rose-500]="c.status === 'Rejected'"></span>
+            {{ c.status === 'UnderReview' ? 'Under Review' : c.status }}
+          </span>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+  }
+</div>

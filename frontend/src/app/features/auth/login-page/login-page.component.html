@@ -1,0 +1,64 @@
+<div
+  class="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-4 relative overflow-hidden font-body z-0">
+  <!-- Decorative Background Elements -->
+  <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-sky-600/10 to-transparent -z-10"></div>
+  <div
+    class="absolute -top-40 -right-40 w-96 h-96 bg-sky-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-30 -z-10">
+  </div>
+  <div
+    class="absolute top-40 -left-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-20 -z-10">
+  </div>
+
+  <!-- Header / Brand -->
+  <div class="mb-8 text-center flex flex-col items-center">
+    <div
+      class="w-12 h-12 bg-gradient-to-br from-sky-400 to-sky-600 rounded-xl flex items-center justify-center shadow-[0_4px_16px_rgba(14,165,233,0.3)] mb-4">
+      <span class="text-white font-bold text-2xl">T</span>
+    </div>
+    <h1 class="text-3xl font-display font-bold text-slate-900 tracking-tight">TravelProtect</h1>
+    <p class="text-slate-500 mt-2 font-medium">Secure your journey, instantly.</p>
+  </div>
+
+  <div
+    class="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden relative">
+    <!-- Top shimmer -->
+    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 to-sky-600"></div>
+
+    <div class="flex border-b border-slate-100">
+      <button type="button" (click)="tab.set('login')"
+        class="flex-1 py-4 px-4 text-sm font-semibold transition-all duration-200 relative"
+        [class.text-sky-600]="tab() === 'login'" [class.text-slate-500]="tab() !== 'login'"
+        [class.hover:text-slate-800]="tab() !== 'login'">
+        Sign In
+        @if (tab() === 'login') {
+        <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-sky-500 shadow-[0_-2px_8px_rgba(14,165,233,0.3)]"></div>
+        }
+      </button>
+      <button type="button" (click)="tab.set('register')"
+        class="flex-1 py-4 px-4 text-sm font-semibold transition-all duration-200 relative"
+        [class.text-sky-600]="tab() === 'register'" [class.text-slate-500]="tab() !== 'register'"
+        [class.hover:text-slate-800]="tab() !== 'register'">
+        Create Account
+        @if (tab() === 'register') {
+        <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-sky-500 shadow-[0_-2px_8px_rgba(14,165,233,0.3)]"></div>
+        }
+      </button>
+    </div>
+    <div class="p-8">
+      @if (tab() === 'login') {
+      <app-login />
+      } @else {
+      <app-register />
+      }
+    </div>
+    <div class="px-8 pb-8 flex justify-center">
+      <a routerLink="/"
+        class="inline-flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-sky-600 transition-colors">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Back to Home
+      </a>
+    </div>
+  </div>
+</div>
